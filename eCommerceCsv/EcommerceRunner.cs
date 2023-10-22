@@ -19,7 +19,17 @@ public class EcommerceRunner
 
         TryReadCsvFile(fileInfo, out IEnumerable<CsvRecordModel> records);
 
-        Log($"Length: {records.Count()}");
+        // the whole file has been read. Now I can extract any information
+        CsvRecordModel maximumPriceRecord = records.OrderByDescending(record => record.UnitPrice * record.Quantity).First();
+        CsvRecordModel maximumQuantity = records.OrderByDescending(record => record.Quantity).First();
+        CsvRecordModel maximumDiscount = records.Where(record => record.PercentageDiscount > 0).OrderByDescending(record => (record.UnitPrice * record.Quantity) - record.UnitPrice * record.Quantity * record.PercentageDiscount).First();
+        Log("Results:");
+        Log($"Maximum price found = {maximumPriceRecord.UnitPrice * maximumPriceRecord.Quantity:C2}");
+        LogRecord(maximumPriceRecord);
+        Log($"Maximum quantity found = {maximumQuantity.Quantity}");
+        LogRecord(maximumQuantity);
+        Log($"Maximum discount found = {(maximumDiscount.UnitPrice * maximumDiscount.Quantity) - maximumDiscount.UnitPrice * maximumDiscount.Quantity * maximumDiscount.PercentageDiscount}");
+        LogRecord(maximumDiscount);
 
     }
 
@@ -46,9 +56,6 @@ private static bool TryReadCsvFile(FileInfo csvFile, out IEnumerable<CsvRecordMo
 
             recordList.Add(newRecord);
         }
-
-        // the whole file has been read. Now I can extract any information
-        
 
         result = true;
     }
@@ -87,12 +94,7 @@ private static bool TryParseLine(string line, out CsvRecordModel record)
         return false;
     }
 
-    if (int.TryParse(fields[0], out int id) == false)
-    {
-        Log("The Id is not valid", ConsoleColor.DarkYellow);
-        return false;
-    }
-    
+    string id = fields[0].Trim();
     string name = fields[1].Trim();
 
     if (int.TryParse(fields[2], out int quantity) == false)
@@ -120,7 +122,7 @@ private static bool TryParseLine(string line, out CsvRecordModel record)
         Name = name,
         Quantity = quantity,
         UnitPrice = unitPrice,
-        PercentageDiscount = percentageDiscount,
+        PercentageDiscount = percentageDiscount/100,
         Buyer = buyer
     };
     
@@ -130,6 +132,12 @@ private static bool TryParseLine(string line, out CsvRecordModel record)
 #endregion
 
 #region UTILS
+
+    private static void LogRecord(CsvRecordModel record)
+    {
+        Log($"{record.Id} {record.Name} {record.Quantity} {record.UnitPrice:C2} {record.PercentageDiscount:P} {record.Buyer}");
+    }
+
     /// <summary>
     /// Useful Log wrapper specific for errors
     /// </summary>

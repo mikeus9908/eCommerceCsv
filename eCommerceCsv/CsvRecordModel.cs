@@ -4,7 +4,7 @@
 /// </summary>
 public record CsvRecordModel
 {
-    public int Id {get; init; }
+    public string Id {get; init; } = string.Empty;
     public string Name {get; init;} = string.Empty;
     public int Quantity {get; init;}
     public float UnitPrice {get; init;}
