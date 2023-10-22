@@ -28,7 +28,7 @@ public class EcommerceRunner
         LogRecord(maximumPriceRecord);
         Log($"Maximum quantity found = {maximumQuantity.Quantity}");
         LogRecord(maximumQuantity);
-        Log($"Maximum discount found = {(maximumDiscount.UnitPrice * maximumDiscount.Quantity) - maximumDiscount.UnitPrice * maximumDiscount.Quantity * maximumDiscount.PercentageDiscount}");
+        Log($"Maximum discount found = {(maximumDiscount.UnitPrice * maximumDiscount.Quantity) - maximumDiscount.UnitPrice * maximumDiscount.Quantity * maximumDiscount.PercentageDiscount:C2}");
         LogRecord(maximumDiscount);
 
     }
@@ -135,7 +135,7 @@ private static bool TryParseLine(string line, out CsvRecordModel record)
 
     private static void LogRecord(CsvRecordModel record)
     {
-        Log($"{record.Id} {record.Name} {record.Quantity} {record.UnitPrice:C2} {record.PercentageDiscount:P} {record.Buyer}");
+        Log($"{record.Id, 4} {record.Name} {record.Quantity} {record.UnitPrice:C2} {record.PercentageDiscount:P} {record.Buyer}");
     }
 
     /// <summary>
